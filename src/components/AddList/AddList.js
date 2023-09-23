@@ -30,6 +30,13 @@ const AddList = ({ isVisible, onClose, onSubmit }) => {
     }));
   };
 
+  const deleteItem = (itemId) => {
+    setList((prevList) => ({
+      ...prevList,
+      items: prevList.items.filter((item) => item.id !== itemId),
+    }));
+  };
+
 
   console.log(list);
 
@@ -90,7 +97,8 @@ const AddList = ({ isVisible, onClose, onSubmit }) => {
           <View style={ styles.table }>
             <Table
               list={list}
-              updateQty={updateQty} // Passa a função de atualização para o componente Table
+              updateQty={updateQty}
+              deleteItem={deleteItem}
             />
           </View>
 

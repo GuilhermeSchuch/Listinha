@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 // Icons
 import Icon from 'react-native-vector-icons/Foundation';
 
-const Table = ({ list, updateQty }) => {
+const Table = ({ list, updateQty, deleteItem  }) => {
   return (
     <View style={styles.table}>
       <View style={styles.row}>
@@ -18,9 +18,11 @@ const Table = ({ list, updateQty }) => {
 
       {list && list.items.map((item) => (
         <View style={styles.row} key={item.id}>
-          <View style={styles.cell}>
-            <Text style={styles.cellText}>{item.name}</Text>
-          </View>
+          <TouchableOpacity onPress={() => deleteItem(item.id)}>
+            <View style={styles.cell}>
+              <Text style={styles.cellText}>{item.name}</Text>
+            </View>
+          </TouchableOpacity>
 
           <View style={styles.cell}>
             <TouchableOpacity onPress={() => updateQty(item.id, item.qty + 1)}>
@@ -29,7 +31,7 @@ const Table = ({ list, updateQty }) => {
 
             <Text style={styles.cellText}>{item.qty}</Text>
 
-            <TouchableOpacity onPress={() => updateQty(item.id, item.qty === 1 ? item.qty : item.qty - 1)}>
+            <TouchableOpacity onPress={() => updateQty(item.id, item.qty - 1)}>
               <Icon name="minus" size={15} color="#f8ce24" style={{ marginLeft: 5, marginTop: 2 }} />
             </TouchableOpacity>
           </View>
