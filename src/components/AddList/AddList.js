@@ -1,4 +1,6 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Keyboard } from 'react-native';
+
+// Modal
 import Modal from 'react-native-modal';
 
 // Hooks
@@ -7,49 +9,94 @@ import { useState } from 'react';
 // Icons
 import Icon from 'react-native-vector-icons/Foundation';
 
+// Components
+import Table from '../Table/Table';
+
 const AddList = ({ isVisible, onClose, onSubmit }) => {
   const [inputValue, setInputValue] = useState('');
+  const [qty, setQty] = useState(1);
+
+  const [list, setList] = useState({
+    title: "Lista",
+    items: [],
+  });
+
+  const updateQty = (itemId, newQty) => {
+    setList((prevList) => ({
+      ...prevList,
+      items: prevList.items.map((item) =>
+        item.id === itemId ? { ...item, qty: newQty } : item
+      ),
+    }));
+  };
+
+
+  console.log(list);
+
 
   const handleSubmit = () => {
-    console.log(inputValue);
+    
+  }
+
+  const handleList = () => {
+    const item = {
+      id: list.items.length,
+      name: inputValue,
+      qty
+    }
+
+    setList(prevItems => ({...prevItems, items: [...list.items, item]}))
 
     setInputValue('');
   }
 
   return (
-    <Modal isVisible={isVisible}>
+    <Modal
+      isVisible={isVisible}
+      animationIn="slideInUp"
+      animationOut="slideOutDown"
+      backdropOpacity={0.7}
+      onBackdropPress={onClose}
+      style={{ marginBottom: 0 }}
+    >
       <View style={ styles.container }>
 
         <View style={ styles.formContainer }>
-          <Text style={ styles.title } onPress={onClose}>Lista</Text>
+          <TextInput style={ styles.title } onChangeText={(text) => setList(prevItems => ({...prevItems, "title": text}))}>{ list.title }</TextInput>
 
-          <View style={ styles.inputContainer }>
-            <Icon name="shopping-cart" size={32} color="#f8ce24" /> 
+          <View style={ styles.inputGroup }>
+            <View style={ styles.inputContainer }>
+              <Icon name="shopping-cart" size={32} color="#f8ce24" /> 
 
-            <TextInput
-              style={ styles.input }
-              placeholder="Adicione o item..."
-              value={inputValue}
-              onChangeText={(text) => setInputValue(text)}
+              <TextInput
+                style={ styles.input }
+                placeholder="Adicione o item..."
+                value={inputValue}
+                onChangeText={(text) => setInputValue(text)}
+              />
+            </View>
+            
+            <View style={ styles.buttonContainer }>
+              <TouchableOpacity onPress={handleList} style={ styles.button }>
+                <Text>Adicionar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => setInputValue('')} style={ styles.button }>
+                <Text>Limpar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={ styles.table }>
+            <Table
+              list={list}
+              updateQty={updateQty} // Passa a função de atualização para o componente Table
             />
           </View>
-          
-          <View style={ styles.buttonContainer }>
-            <TouchableOpacity onPress={handleSubmit} style={ styles.button }>
-              <Text>Adicionar</Text>
-            </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setInputValue('')} style={ styles.button }>
-              <Text>Limpar</Text>
-            </TouchableOpacity>
-          </View>
-          
-
-
-
-          {/* <TouchableOpacity onPress={onClose}>
-            <Text>Close</Text>
-          </TouchableOpacity> */}
+          <TouchableOpacity onPress={handleSubmit} style={ styles.create }>
+            <Text>Criar lista</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -64,15 +111,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#0398ff',
     alignItems: 'center',
     justifyContent: 'start',
-    border: "1px solid red",
   },
 
   formContainer: {
     backgroundColor: '#0398ff',
-    height: "90%",
+    height: "100%",
     width: "90%",
     display: "flex",
-    alignItems: "center",
+    alignItems: "center",    
+  },
+
+  inputGroup: {
+    width: "100%",
+    backgroundColor: '#0398ff',
   },
 
   inputContainer: {
@@ -111,5 +162,22 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     padding: 6,
     marginRight: 3,
-  }
+  },
+
+  create: {
+    backgroundColor: "#f8ce24",
+    borderRadius: 13,
+    padding: 6,
+    marginRight: 3,
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    marginTop: "auto",
+    marginBottom: 10
+  },
+
+  table: {
+    width: "100%",
+    marginTop: 50,
+  },
 });
