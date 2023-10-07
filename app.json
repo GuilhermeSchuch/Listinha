@@ -3,6 +3,7 @@
     "name": "Listinha",
     "slug": "listinha",
     "version": "1.0.0",
+    "jsEngine": "hermes",
     "orientation": "portrait",
     "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",

@@ -4,7 +4,10 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Keyboard } from 'r
 import Modal from 'react-native-modal';
 
 // Hooks
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+// DB
+import { storage } from '../../mmkv/instance';
 
 // Icons
 import Icon from 'react-native-vector-icons/Foundation';
@@ -20,6 +23,12 @@ const AddList = ({ isVisible, onClose, onSubmit }) => {
     title: "Lista",
     items: [],
   });
+
+
+  // const query = List.create({ name: "Bah", items: ["sim"] }).then(() => console.log("critou")).catch((err) => console.log(err));
+  // console.log(query);
+  
+
 
   const updateQty = (itemId, newQty) => {
     setList((prevList) => ({
