@@ -6,8 +6,8 @@ import Modal from 'react-native-modal';
 // Hooks
 import { useState, useEffect } from 'react';
 
-// DB
-import { storage } from '../../mmkv/instance';
+// BD
+import ListaService from '../../services/Lista';
 
 // Icons
 import Icon from 'react-native-vector-icons/Foundation';
@@ -23,10 +23,6 @@ const AddList = ({ isVisible, onClose, onSubmit }) => {
     title: "Lista",
     items: [],
   });
-
-
-  // const query = List.create({ name: "Bah", items: ["sim"] }).then(() => console.log("critou")).catch((err) => console.log(err));
-  // console.log(query);
   
 
 
@@ -46,12 +42,10 @@ const AddList = ({ isVisible, onClose, onSubmit }) => {
     }));
   };
 
-
-  console.log(list);
-
+  // console.log(list);
 
   const handleSubmit = () => {
-    
+    ListaService.addData(list);
   }
 
   const handleList = () => {
@@ -65,6 +59,10 @@ const AddList = ({ isVisible, onClose, onSubmit }) => {
 
     setInputValue('');
   }
+
+  // useEffect(() => {
+  //   ListaService.findList().then((res) => console.log(res));
+  // }, [list]);
 
   return (
     <Modal

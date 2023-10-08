@@ -5,6 +5,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 const Stack = createNativeStackNavigator();
 
+// BD
+import DatabaseInit from "./src/database/bd";
+new DatabaseInit
+
+
+
 // Fonts
 import { useFonts } from 'expo-font';
 
@@ -15,6 +21,7 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     'Shrikhand': require('./src/assets/fonts/Shrikhand/Shrikhand-Regular.ttf'),
   });
+  
 
   return (
     <NavigationContainer>
