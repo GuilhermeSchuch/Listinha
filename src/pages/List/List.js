@@ -25,10 +25,21 @@ const List = () => {
 
   useEffect(() => {
     ListaService.findList().then((list) => setListData(list._array));
-  }, []);
+  }, [isModalVisible]);
 
   console.log(listData);
 
+  const handleDelete = async (id) => {
+    try {
+      console.log("ID: " + id);
+      console.log(typeof(id));
+      const deleteId = await ListaService.deleteData(id);
+
+      console.log("Data deleted with deleteId:", deleteId);
+    } catch (error) {
+      console.error("Error adding data:", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -37,7 +48,7 @@ const List = () => {
       
       { listData && listData.map((list) => (
         <View key={list.id} style={styles.listContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onLongPress={async () => await handleDelete(list.id)}>
             <Text style={styles.listName}>{ list.name }</Text>
 
             <View style={styles.border}>

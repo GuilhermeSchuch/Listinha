@@ -9,8 +9,6 @@ const Stack = createNativeStackNavigator();
 import DatabaseInit from "./src/database/bd";
 new DatabaseInit
 
-
-
 // Fonts
 import { useFonts } from 'expo-font';
 

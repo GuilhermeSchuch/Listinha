@@ -4,38 +4,31 @@ const db = DatabaseConnection.getConnection()
 
 export default class ListaService {
 
-
 	static addData(list) {
-		let sql = [
-			`insert into list (name) values ('${list.title}');`,
-			[...list.items.forEach(item => `insert into item (name, qty) values ('${item.name}', ${item.qty});`)]
-
-		];
-		console.log(`SQL: ${sql}`);
-
 		if(db){
 			return new Promise((resolve, reject) =>
 				db.transaction(
 						tx => {
 								tx.executeSql(
 										`insert into list (name) values (?)`,
-										[list.title],
+										[list?.title],
 										(_, { insertId }) => {
 												console.log("id insert: " + insertId);
 												resolve(insertId);
 										},
 										sqlError => {
 												console.log(sqlError);
+												reject(sqlError);
 										}
 								);
 						},
 						tx => {
 								// Insert list items and create associations in a single transaction
-								for (var i = 0; i < list.items.length; i++) {
-									console.log(list.items[i].name);
+								for (var i = 0; i < list?.items?.length; i++) {
+									console.log(list?.items[i]?.name);
 										tx.executeSql(
 												`insert into item (name, qty) values (?, ?)`,
-												[list.items[i].name, list.items[i].qty],
+												[list?.items[i]?.name, list?.items[i]?.qty],
 												(_, { insertId }) => {
 														// Insert into list_has_item using the last insert IDs
 														tx.executeSql(
@@ -46,11 +39,13 @@ export default class ListaService {
 																},
 																sqlError => {
 																		console.log(sqlError);
+																		reject(sqlError);
 																}
 														);
 												},
 												sqlError => {
 														console.log(sqlError);
+														reject(sqlError);
 												}
 										);
 								}
@@ -60,18 +55,46 @@ export default class ListaService {
 		}
 	}
 
-
-     static deleteById(id) {
+	static deleteData(id) {
+		if (db) {
+      return new Promise((resolve, reject) =>
         db.transaction(
-            tx => {
-                tx.executeSql(`delete from ${table} where id = ?;`, [id], (_, { rows }) => {
-                }), (sqlError) => {
+          tx => {
+            // Delete items associated with the list
+            tx.executeSql(
+              `DELETE FROM item WHERE id IN (SELECT item_id FROM list_has_item WHERE list_id = ?)`,
+              [id],
+              (_, { rowsAffected }) => {
+                console.log(`Deleted ${rowsAffected} items`);
+                
+                // Delete the list
+                tx.executeSql(
+                  `DELETE FROM list WHERE id = ?`,
+                  [id],
+                  (_, { rowsAffected }) => {
+                    console.log(`Deleted ${rowsAffected} list`);
+                    resolve(rowsAffected);
+                  },
+                  sqlError => {
                     console.log(sqlError);
-                }}, (txError) => {
-                console.log(txError);
-    
-            });
-    }
+                    reject(sqlError);
+                  }
+                );
+              },
+              sqlError => {
+                console.log(sqlError);
+                reject(sqlError);
+              }
+            );
+          },
+          txError => {
+            console.log(txError);
+            reject(txError);
+          }
+        )
+      );
+		}
+	}
 
 
      static updateById(Animal) {

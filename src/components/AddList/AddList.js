@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Keyboard } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
 // Modal
 import Modal from 'react-native-modal';
@@ -24,8 +24,6 @@ const AddList = ({ isVisible, onClose, onSubmit }) => {
     items: [],
   });
   
-
-
   const updateQty = (itemId, newQty) => {
     setList((prevList) => ({
       ...prevList,
@@ -42,11 +40,18 @@ const AddList = ({ isVisible, onClose, onSubmit }) => {
     }));
   };
 
-  // console.log(list);
-
-  const handleSubmit = () => {
-    ListaService.addData(list);
-  }
+  const handleSubmit = async () => {
+    try {
+      const insertId = await ListaService.addData(list);
+      // You can now work with the insertId or perform any other actions after the data has been added.
+      console.log("Data added with insertId:", insertId);
+      setList({title: 'Lista',items: []});
+      
+    } catch (error) {
+      console.error("Error adding data:", error);
+    }
+  };
+  
 
   const handleList = () => {
     const item = {
@@ -59,10 +64,6 @@ const AddList = ({ isVisible, onClose, onSubmit }) => {
 
     setInputValue('');
   }
-
-  // useEffect(() => {
-  //   ListaService.findList().then((res) => console.log(res));
-  // }, [list]);
 
   return (
     <Modal
