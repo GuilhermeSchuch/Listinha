@@ -6,77 +6,107 @@ import { useEffect, useState } from "react";
 // Components
 import AddList from '../../components/AddList/AddList';
 import MiniCircle from '../../components/Border/MiniCircle';
+import Loader from '../../components/Loader/Loader';
 
 // BD
 import ListaService from '../../services/Lista';
 
 const List = () => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [listData, setListData] = useState([]);
+  const [reload, setReload] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [list, setList] = useState([]);
 
   const toggleModal = () => {
+    setIsLoading(true);
+    setReload(!reload);
     setModalVisible(!isModalVisible);
+    setIsLoading(false);
   }
 
-  const handleFormSubmit = (inputValue) => {
-    console.log('Form submitted with value:', inputValue);
+  const handleFormSubmit = () => {
     toggleModal();
   }
 
   useEffect(() => {
+    setIsLoading(true);
     ListaService.findList().then((list) => setListData(list._array));
-  }, [isModalVisible]);
-
-  console.log(listData);
+    setIsLoading(false);
+    setIsEditMode(false);
+  }, [reload]);
 
   const handleDelete = async (id) => {
     try {
-      console.log("ID: " + id);
-      console.log(typeof(id));
+      setIsLoading(true);
+
       const deleteId = await ListaService.deleteData(id);
 
-      console.log("Data deleted with deleteId:", deleteId);
+      setReload(!reload);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error adding data:", error);
     }
   };
 
+  const handleFindList = async (id) => {
+    try {
+      setIsLoading(true);
+
+      const listId = await ListaService.findById(id).then((list) => setList(list));
+
+      setReload(!reload);
+      setIsLoading(false);
+      setIsEditMode(true);
+      
+      toggleModal();
+    } catch (error) {
+      console.error("Error finding data:", error);
+    }
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Listas</Text>
+      { isLoading ? <Loader /> : (
+        <>
+          <Text style={styles.title}>Listas</Text>
+                
+          { listData && listData.map((list) => (
+            <View key={list.id} style={styles.listContainer}>
+              <TouchableOpacity onPress={ async () => await handleFindList(list.id) } onLongPress={ async () => await handleDelete(list.id)} >
+                <Text style={styles.listName}>{ list.name }</Text>
 
-      
-      { listData && listData.map((list) => (
-        <View key={list.id} style={styles.listContainer}>
-          <TouchableOpacity onLongPress={async () => await handleDelete(list.id)}>
-            <Text style={styles.listName}>{ list.name }</Text>
-
-            <View style={styles.border}>
-              <MiniCircle />
-              <MiniCircle />
-              <MiniCircle />
-              <MiniCircle />
-              <MiniCircle />
-              <MiniCircle />
-              <MiniCircle />
-              <MiniCircle />
-              <MiniCircle />
-              <MiniCircle />
-              <MiniCircle />
-              <MiniCircle />
+                <View style={styles.border}>
+                  <MiniCircle />
+                  <MiniCircle />
+                  <MiniCircle />
+                  <MiniCircle />
+                  <MiniCircle />
+                  <MiniCircle />
+                  <MiniCircle />
+                  <MiniCircle />
+                  <MiniCircle />
+                  <MiniCircle />
+                  <MiniCircle />
+                  <MiniCircle />
+                </View>
+              </TouchableOpacity>        
             </View>
-          </TouchableOpacity>        
-        </View>
-      ))}
+          ))}
 
-      <TouchableOpacity style={styles.button} onPress={toggleModal}>
-        <Text style={styles.newList}>Criar nova lista</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={toggleModal}>
+            <Text style={styles.newList}>Criar nova lista</Text>
+          </TouchableOpacity>
+        </>
+      ) }
 
       <AddList 
         isVisible={isModalVisible}
+        isEditMode={isEditMode}
         onClose={toggleModal}
         onSubmit={handleFormSubmit}
+        bdList={list || ''}
       />
     </View>
   )

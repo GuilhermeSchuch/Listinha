@@ -8,7 +8,7 @@ const Table = ({ list, updateQty, deleteItem  }) => {
     <View style={styles.table}>
       <View style={styles.row}>
         <View style={styles.cell}>
-          <Text style={styles.cellText}>Items</Text>
+          <Text style={styles.cellText}>Itens</Text>
         </View>
 
         <View style={styles.cell}>

@@ -15,14 +15,33 @@ import Icon from 'react-native-vector-icons/Foundation';
 // Components
 import Table from '../Table/Table';
 
-const AddList = ({ isVisible, onClose, onSubmit }) => {
+const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   const [inputValue, setInputValue] = useState('');
   const [qty, setQty] = useState(1);
-
+  const [reload, setReload] = useState(false);
+  
   const [list, setList] = useState({
     title: "Lista",
     items: [],
   });
+
+  // Convert data from BD to list data
+  useEffect(() => {
+    if(isEditMode){
+      const result = {
+        title: bdList.length > 0 ? bdList[0].list : "Lista",
+        items: bdList.map(item => ({
+          name: item.item,
+          qty: item.qty,
+          id: item.id
+        }))
+      };
+      setList(result);
+    }
+    else{
+      setList({title: "Lista", items: []});
+    }
+  }, [isVisible]);
   
   const updateQty = (itemId, newQty) => {
     setList((prevList) => ({
@@ -111,9 +130,10 @@ const AddList = ({ isVisible, onClose, onSubmit }) => {
           </View>
 
           <TouchableOpacity onPress={handleSubmit} style={ styles.create }>
-            <Text>Criar lista</Text>
+            <Text>{ isEditMode ? "Salvar" : "Criar Lista" }</Text>
           </TouchableOpacity>
         </View>
+
       </View>
     </Modal>
   )
