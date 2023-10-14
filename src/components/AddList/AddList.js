@@ -8,17 +8,20 @@ import { useState, useEffect } from 'react';
 
 // BD
 import ListaService from '../../services/Lista';
+import ItemService from '../../services/Item';
 
 // Icons
 import Icon from 'react-native-vector-icons/Foundation';
 
 // Components
 import Table from '../Table/Table';
+import Loader from '../Loader/Loader';
 
 const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   const [inputValue, setInputValue] = useState('');
   const [qty, setQty] = useState(1);
-  const [reload, setReload] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
   
   const [list, setList] = useState({
     title: "Lista",
@@ -26,10 +29,11 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   });
 
   // Convert data from BD to list data
-  useEffect(() => {
+  useEffect(() => {    
     if(isEditMode){
       const result = {
         title: bdList.length > 0 ? bdList[0].list : "Lista",
+        id: bdList[0].listId,
         items: bdList.map(item => ({
           name: item.item,
           qty: item.qty,
@@ -52,11 +56,30 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
     }));
   };
 
-  const deleteItem = (itemId) => {
-    setList((prevList) => ({
-      ...prevList,
-      items: prevList.items.filter((item) => item.id !== itemId),
-    }));
+  const deleteItem = async (itemId, listId) => {
+    setIsLoading(true);
+
+    try {
+      if(isEditMode){
+        
+        setList((prevList) => ({
+          ...prevList,
+          items: prevList.items.filter((item) => item.id !== itemId),
+        }));
+
+        const deleteId = await ItemService.deleteData(itemId, listId);
+      }
+      else{
+        setList((prevList) => ({
+          ...prevList,
+          items: prevList.items.filter((item) => item.id !== itemId),
+        }));
+      }
+      
+    } catch (error) {
+      console.error("Error adding data:", error);
+    }
+    setIsLoading(false);
   };
 
   const handleSubmit = async () => {
@@ -64,12 +87,21 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
       const insertId = await ListaService.addData(list);
       // You can now work with the insertId or perform any other actions after the data has been added.
       console.log("Data added with insertId:", insertId);
-      setList({title: 'Lista',items: []});
+      setList({title: 'Lista', items: []});
       
     } catch (error) {
       console.error("Error adding data:", error);
     }
   };
+
+  const handleUpdate = async () => {
+    try {
+      const updateData = await ListaService.updateById([ list ]);
+
+    } catch (error) {
+      console.error("Error adding data:", error);
+    }
+  }
   
 
   const handleList = () => {
@@ -126,10 +158,11 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
               list={list}
               updateQty={updateQty}
               deleteItem={deleteItem}
+              isEditMode={isEditMode}
             />
           </View>
 
-          <TouchableOpacity onPress={handleSubmit} style={ styles.create }>
+          <TouchableOpacity onPress={ isEditMode ? handleUpdate : handleSubmit } style={ styles.create }>
             <Text>{ isEditMode ? "Salvar" : "Criar Lista" }</Text>
           </TouchableOpacity>
         </View>

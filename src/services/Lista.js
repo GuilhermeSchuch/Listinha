@@ -6,6 +6,7 @@ export default class ListaService {
 
   static addData(list) {
     if (db) {
+      console.log("chegou ne");
       return new Promise((resolve, reject) =>
         db.transaction(
           tx => {
@@ -59,7 +60,6 @@ export default class ListaService {
     }
   }
   
-
 	static deleteData(id) {
 		if (db) {
       return new Promise((resolve, reject) =>
@@ -101,15 +101,55 @@ export default class ListaService {
 		}
 	}
 
-  static updateById(Animal) {
-    return new Promise((resolve, reject) =>db.transaction(tx => {
-            tx.executeSql(`update ${table} set nome = ? where id = ?;`, [param.nome,param.id], () => {
-            }), (sqlError) => {
+  static updateById(listData) {
+    if (db) {
+      return new Promise((resolve, reject) =>
+        db.transaction(
+          tx => {
+            // Update the list name in the 'list' table
+            console.log("primeiro:");
+            console.log(listData);
+            tx.executeSql(
+              `UPDATE list SET name = ? WHERE id = ?`,
+              [listData[0]?.title, listData[0]?.id],
+              (_, { rowsAffected }) => {
+                console.log(`Updated ${rowsAffected} list name`);
+              },
+              sqlError => {
                 console.log(sqlError);
-            }}, (txError) => {
+                reject(sqlError);
+              }
+            );
+            // console.log("segundo:")
+            // console.log(listData);
+            // Iterate through the listData array to update items
+            listData[0]?.items?.forEach(itemData => {
+              // Update item name and quantity in the 'item' table
+              console.log("segundo:");
+              console.log(itemData);
+              tx.executeSql(
+                `UPDATE item SET name = ?, qty = ? WHERE id = ?`,
+                [itemData?.name, itemData?.qty, itemData?.id],
+                (_, { rowsAffected }) => {
+                  console.log(`Updated ${rowsAffected} item(s)`);
+                },
+                sqlError => {
+                  console.log(sqlError);
+                  reject(sqlError);
+                }
+              );
+            });
+          },
+          txError => {
             console.log(txError);
-
-        }));
+            reject(txError);
+          },
+          () => {
+            resolve("List and items updated successfully");
+          }
+        )
+      );
+    }
   }
 
   static findById(id) {
@@ -119,15 +159,13 @@ export default class ListaService {
           (tx) => {
             tx.executeSql(
               `
-              SELECT l.name AS list, i.id, i.name AS item, i.qty FROM list l 
+              SELECT l.id AS listId, l.name AS list, i.id, i.name AS item, i.qty FROM list l 
               JOIN list_has_item lhi ON lhi.list_id = l.id 
               JOIN item i ON i.id = lhi.item_id WHERE l.id = ?;
               `,
               [id],
               (_, { rows }) => {
                 const results = rows._array;
-                console.log(`results:`);
-                console.log(results);
                 resolve(results);
               },
               (sqlError) => {
@@ -148,15 +186,13 @@ export default class ListaService {
   static findList() {
     return new Promise((resolve, reject) => db.transaction(tx => {
         tx.executeSql(`select * from list`, [], (_, { rows }) => {
-            resolve(rows)
+          // console.log(rows);
+          resolve(rows);
         }), (sqlError) => {
             console.log(sqlError);
         }}, (txError) => {
         console.log(txError);
     }))
-
-
   }
-
 
 }

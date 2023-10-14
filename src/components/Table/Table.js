@@ -1,9 +1,27 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
+// Hooks
+import { useState } from 'react';
+
 // Icons
 import Icon from 'react-native-vector-icons/Foundation';
 
-const Table = ({ list, updateQty, deleteItem  }) => {
+const Table = ({ list, updateQty, deleteItem, isEditMode }) => {
+  const [checkedItems, setCheckedItems] = useState([]);
+
+  const checkItem = (itemId) => {
+    const isChecked = checkedItems.includes(itemId);
+
+    if(isChecked){
+      setCheckedItems((prevItems) => (
+        prevItems.filter((item) => item !== itemId)
+      ));
+    }
+    else{
+      setCheckedItems([...checkedItems, itemId]);
+    }
+  }
+
   return (
     <View style={styles.table}>
       <View style={styles.row}>
@@ -18,9 +36,9 @@ const Table = ({ list, updateQty, deleteItem  }) => {
 
       {list && list.items.map((item) => (
         <View style={styles.row} key={item.id}>
-          <TouchableOpacity onPress={() => deleteItem(item.id)}>
+          <TouchableOpacity onLongPress={() => deleteItem(item.id, list.id)} onPress={isEditMode ? () => checkItem(item.id) : null}>
             <View style={styles.cell}>
-              <Text style={styles.cellText}>{item.name}</Text>
+              <Text style={[styles.cellText, checkedItems.includes(item.id) ? { color: '#008000', textDecorationLine: "line-through" } : { color: '#000' }]}>{item.name}</Text>
             </View>
           </TouchableOpacity>
 
