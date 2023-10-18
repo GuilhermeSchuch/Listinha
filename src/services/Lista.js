@@ -6,7 +6,6 @@ export default class ListaService {
 
   static addData(list) {
     if (db) {
-      console.log("chegou ne");
       return new Promise((resolve, reject) =>
         db.transaction(
           tx => {
@@ -15,11 +14,9 @@ export default class ListaService {
               `insert into list (name) values (?)`,
               [list?.title],
               (_, { insertId }) => {
-                console.log("id insert: " + insertId);
                 // Now, insert the items within the same transaction
                 for (let i = 0; i < list?.items?.length; i++) {
                   const item = list.items[i];
-                  console.log(item.name);
                   tx.executeSql(
                     `insert into item (name, qty) values (?, ?)`,
                     [item.name, item.qty],
@@ -103,12 +100,12 @@ export default class ListaService {
 
   static updateById(listData) {
     if (db) {
+      console.log("ListData:");
+      console.log(listData);
       return new Promise((resolve, reject) =>
         db.transaction(
           tx => {
             // Update the list name in the 'list' table
-            console.log("primeiro:");
-            console.log(listData);
             tx.executeSql(
               `UPDATE list SET name = ? WHERE id = ?`,
               [listData[0]?.title, listData[0]?.id],
@@ -120,16 +117,14 @@ export default class ListaService {
                 reject(sqlError);
               }
             );
-            // console.log("segundo:")
-            // console.log(listData);
             // Iterate through the listData array to update items
             listData[0]?.items?.forEach(itemData => {
               // Update item name and quantity in the 'item' table
-              console.log("segundo:");
+              console.log("itemData:");
               console.log(itemData);
               tx.executeSql(
-                `UPDATE item SET name = ?, qty = ? WHERE id = ?`,
-                [itemData?.name, itemData?.qty, itemData?.id],
+                `INSERT OR REPLACE INTO item (id, name, qty) VALUES (?, ?, ?)`,
+                [itemData?.id, itemData?.name, itemData?.qty],
                 (_, { rowsAffected }) => {
                   console.log(`Updated ${rowsAffected} item(s)`);
                 },
@@ -137,7 +132,22 @@ export default class ListaService {
                   console.log(sqlError);
                   reject(sqlError);
                 }
-              );
+              );              
+            });
+
+            listData[0]?.items?.forEach(itemData => {
+              
+              tx.executeSql(
+                `INSERT OR REPLACE INTO list_has_item (list_id, item_id) VALUES (?, ?);`,
+                [listData[0]?.id, itemData?.id],
+                (_, { rowsAffected }) => {
+                  console.log(`Updated ${rowsAffected} item(s)`);
+                },
+                sqlError => {
+                  console.log(sqlError);
+                  reject(sqlError);
+                }
+              );              
             });
           },
           txError => {
@@ -159,7 +169,7 @@ export default class ListaService {
           (tx) => {
             tx.executeSql(
               `
-              SELECT l.id AS listId, l.name AS list, i.id, i.name AS item, i.qty FROM list l 
+              SELECT l.id AS idList, l.name AS list, i.id, i.name AS item, i.qty FROM list l 
               JOIN list_has_item lhi ON lhi.list_id = l.id 
               JOIN item i ON i.id = lhi.item_id WHERE l.id = ?;
               `,

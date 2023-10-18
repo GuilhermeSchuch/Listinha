@@ -21,6 +21,7 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   const [inputValue, setInputValue] = useState('');
   const [qty, setQty] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+
   
   
   const [list, setList] = useState({
@@ -28,16 +29,18 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
     items: [],
   });
 
+  console.log(list);
+
   // Convert data from BD to list data
   useEffect(() => {    
     if(isEditMode){
       const result = {
-        title: bdList.length > 0 ? bdList[0].list : "Lista",
-        id: bdList[0].listId,
-        items: bdList.map(item => ({
-          name: item.item,
-          qty: item.qty,
-          id: item.id
+        title: bdList?.length > 0 ? bdList[0]?.list : "Lista",
+        id: bdList[0]?.idList,
+        items: bdList?.map(item => ({
+          name: item?.item,
+          qty: item?.qty,
+          id: item?.id
         }))
       };
       setList(result);
@@ -56,7 +59,7 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
     }));
   };
 
-  const deleteItem = async (itemId, listId) => {
+  const deleteItem = async (itemId, z) => {
     setIsLoading(true);
 
     try {
@@ -67,7 +70,7 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
           items: prevList.items.filter((item) => item.id !== itemId),
         }));
 
-        const deleteId = await ItemService.deleteData(itemId, listId);
+        const deleteId = await ItemService.deleteData(itemId);
       }
       else{
         setList((prevList) => ({
