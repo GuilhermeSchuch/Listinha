@@ -1,4 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  SafeAreaView, 
+  ScrollView, 
+  StatusBar 
+} from 'react-native';
 
 // Hooks
 import { useState } from 'react';
@@ -23,39 +31,43 @@ const Table = ({ list, updateQty, deleteItem, isEditMode }) => {
   }
 
   return (
-    <View style={styles.table}>
-      <View style={styles.row}>
-        <View style={styles.cell}>
-          <Text style={styles.cellText}>Itens</Text>
-        </View>
-
-        <View style={styles.cell}>
-          <Text style={styles.cellText}>QTD</Text>
-        </View>
-      </View>
-
-      {list && list.items.map((item) => (
-        <View style={styles.row} key={item.id}>
-          <TouchableOpacity onLongPress={() => deleteItem(item.id, list.id)} onPress={isEditMode ? () => checkItem(item.id) : null}>
+    <SafeAreaView style={styles.container}>
+        <View style={styles.table}>
+          <View style={styles.row}>
             <View style={styles.cell}>
-              <Text style={[styles.cellText, checkedItems.includes(item.id) ? { color: '#008000', textDecorationLine: "line-through" } : { color: '#000' }]}>{item.name}</Text>
+              <Text style={styles.titleCell}>Itens</Text>
             </View>
-          </TouchableOpacity>
 
-          <View style={styles.cell}>
-            <TouchableOpacity onPress={() => updateQty(item.id, item.qty + 1)}>
-              <Icon name="plus" size={20} color="#f8ce24" style={{ marginHorizontal: 5 }} />
-            </TouchableOpacity>
-
-            <Text style={styles.cellText}>{item.qty}</Text>
-
-            <TouchableOpacity onPress={() => updateQty(item.id, item.qty - 1)}>
-              <Icon name="minus" size={15} color="#f8ce24" style={{ marginLeft: 5, marginTop: 2 }} />
-            </TouchableOpacity>
+            <View style={styles.cell}>
+              <Text style={styles.titleCell}>QTD</Text>
+            </View>
           </View>
+
+          <ScrollView style={styles.scrollView}>
+            {list && list.items.map((item) => (
+              <View style={styles.row} key={item.id}>
+                <TouchableOpacity onLongPress={() => deleteItem(item.id, list.id)} onPress={isEditMode ? () => checkItem(item.id) : null}>
+                  <View style={styles.cell}>
+                    <Text style={[styles.cellText, checkedItems.includes(item.id) ? { color: '#008000', textDecorationLine: "line-through" } : { color: '#000' }]}>{item.name}</Text>
+                  </View>
+                </TouchableOpacity>
+
+                <View style={styles.cell}>
+                  <TouchableOpacity onPress={() => updateQty(item.id, item.qty + 1)}>
+                    <Icon name="plus" size={20} color="#f8ce24" style={{ marginHorizontal: 5 }} />
+                  </TouchableOpacity>
+
+                  <Text style={styles.cellText}>{item.qty}</Text>
+
+                  <TouchableOpacity onPress={() => updateQty(item.id, item.qty - 1)}>
+                    <Icon name="minus" size={15} color="#f8ce24" style={{ marginLeft: 5, marginTop: 2 }} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
+          </ScrollView>
         </View>
-      ))}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -63,25 +75,41 @@ export default Table;
 
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+    width: "100%",
+  },
+  text: {
+    fontSize: 42,
+  },
+
   table: {
     borderWidth: 1,
     borderColor: '#000',
     borderRadius: 5,
-    margin: 10,
+    width: "100%",
   },
+
   row: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: '#000',
     display: "flex",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
+
   cell: {
     padding: 10,
     display: "flex",
     flexDirection: "row",
   },
+
   cellText: {
     textAlign: 'center',
   },
+
+  titleCell: {
+    fontWeight: "700",
+  }
 });

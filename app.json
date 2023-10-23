@@ -5,10 +5,10 @@
     "version": "1.0.0",
     "jsEngine": "hermes",
     "orientation": "portrait",
-    "icon": "./src/assets/icon.png",
+    "icon": "./src/assets/images/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./src/assets/splash.png",
+      "image": "./src/assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -16,23 +16,30 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/adaptive-icon.png",
+        "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.g_schuch.listinha"
+      "package": "com.g_schuch.listinha",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
-      "favicon": "./src/assets/favicon.png"
+      "favicon": "./src/assets/images/favicon.png"
     },
     "extra": {
       "eas": {
         "projectId": "8b729592-66fd-4754-be2f-cd738d34d5ae"
       }
     },
-    "owner": "g_schuch"
+    "owner": "g_schuch",
+    "updates": {
+      "url": "https://u.expo.dev/8b729592-66fd-4754-be2f-cd738d34d5ae"
+    }
   }
 }

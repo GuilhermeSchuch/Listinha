@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   },
 
   table: {
+    flex: 1,
     width: "100%",
-    marginTop: 50,
   },
 });
