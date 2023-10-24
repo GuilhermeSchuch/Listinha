@@ -1,4 +1,12 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  TouchableOpacity,
+  SafeAreaView, 
+  ScrollView, 
+  StatusBar
+} from 'react-native';
 
 // Hooks
 import { useEffect, useState } from "react";
@@ -67,35 +75,38 @@ const List = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       { isLoading ? <Loader /> : (
         <>
           <Text style={styles.title}>Listas</Text>
-                
-          { listData && listData.map((list) => (
-            <View key={list.id} style={styles.listContainer}>
-              <TouchableOpacity onPress={ async () => await handleFindList(list.id) } onLongPress={ async () => await handleDelete(list.id)} >
-                <Text style={styles.listName}>{ list.name }</Text>
 
-                <View style={styles.border}>
-                  <MiniCircle />
-                  <MiniCircle />
-                  <MiniCircle />
-                  <MiniCircle />
-                  <MiniCircle />
-                  <MiniCircle />
-                  <MiniCircle />
-                  <MiniCircle />
-                  <MiniCircle />
-                  <MiniCircle />
-                  <MiniCircle />
-                  <MiniCircle />
-                </View>
-              </TouchableOpacity>        
-            </View>
-          ))}
+          <ScrollView>
+            { listData && listData.map((list) => (
+              <View key={list.id} style={styles.listContainer}>
+                <TouchableOpacity onPress={ async () => await handleFindList(list.id) } onLongPress={ async () => await handleDelete(list.id)} >
+                  <Text style={styles.listName}>{ list.name }</Text>
 
-          <TouchableOpacity style={styles.button} onPress={toggleModal}>
+                  <View style={styles.border}>
+                    <MiniCircle />
+                    <MiniCircle />
+                    <MiniCircle />
+                    <MiniCircle />
+                    <MiniCircle />
+                    <MiniCircle />
+                    <MiniCircle />
+                    <MiniCircle />
+                    <MiniCircle />
+                    <MiniCircle />
+                    <MiniCircle />
+                    <MiniCircle />
+                  </View>
+
+                </TouchableOpacity>        
+              </View>
+            ))}
+          </ScrollView>
+
+          <TouchableOpacity style={[styles.button, { marginBottom: 10 }]} onPress={toggleModal}>
             <Text style={styles.newList}>Criar nova lista</Text>
           </TouchableOpacity>
         </>
@@ -108,7 +119,7 @@ const List = () => {
         onSubmit={handleFormSubmit}
         bdList={list || ''}
       />
-    </View>
+    </SafeAreaView>
   )
 }
 

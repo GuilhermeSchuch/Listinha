@@ -1,4 +1,11 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  TouchableWithoutFeedback 
+} from 'react-native';
 
 // Modal
 import Modal from 'react-native-modal';
@@ -23,13 +30,10 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   
-  
   const [list, setList] = useState({
     title: "Lista",
     items: [],
   });
-
-  console.log(list);
 
   // Convert data from BD to list data
   useEffect(() => {    
@@ -108,15 +112,18 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   
 
   const handleList = () => {
-    const item = {
+    if(inputValue.length > 0){
+      const item = {
       id: list.items.length,
-      name: inputValue,
+      name: inputValue.trim(),
       qty
     }
 
     setList(prevItems => ({...prevItems, items: [...list.items, item]}))
 
     setInputValue('');
+      
+    }
   }
 
   return (
@@ -146,9 +153,16 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
             </View>
             
             <View style={ styles.buttonContainer }>
-              <TouchableOpacity onPress={handleList} style={ styles.button }>
-                <Text>Adicionar</Text>
-              </TouchableOpacity>
+              {inputValue.length > 0 ? (
+                <TouchableOpacity onPress={handleList} style={ styles.button }>
+                  <Text>Adicionar</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableWithoutFeedback>
+                  <Text style={[styles.button, { backgroundColor: "#DDB308" }]}>Adicionar</Text>
+                </TouchableWithoutFeedback>
+              )}
+              
 
               <TouchableOpacity onPress={() => setInputValue('')} style={ styles.button }>
                 <Text>Limpar</Text>
