@@ -12,6 +12,7 @@ import Modal from 'react-native-modal';
 
 // Hooks
 import { useState, useEffect } from 'react';
+import { useSelector } from "react-redux";
 
 // BD
 import ListaService from '../../services/Lista';
@@ -19,6 +20,9 @@ import ItemService from '../../services/Item';
 
 // Icons
 import Icon from 'react-native-vector-icons/Foundation';
+
+// BD
+import UserService from '../../services/User';
 
 // Components
 import Table from '../Table/Table';
@@ -28,10 +32,13 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   const [inputValue, setInputValue] = useState('');
   const [qty, setQty] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [userData, setUserData] = useState({});
 
-  
+  const { currentUser } = useSelector((rootReducer) => rootReducer.userReducer);
+
+
   const [list, setList] = useState({
-    title: "Lista",
+    title: currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List"),
     items: [],
   });
 
@@ -39,7 +46,7 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   useEffect(() => {    
     if(isEditMode){
       const result = {
-        title: bdList?.length > 0 ? bdList[0]?.list : "Lista",
+        title: bdList?.length > 0 ? bdList[0]?.list : (currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List")),
         id: bdList[0]?.idList,
         items: bdList?.map(item => ({
           name: item?.item,
@@ -50,9 +57,10 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
       setList(result);
     }
     else{
-      setList({title: "Lista", items: []});
+      setList({title: (currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List")), items: []});
     }
   }, [isVisible]);
+
   
   const updateQty = (itemId, newQty) => {
     setList((prevList) => ({
@@ -110,7 +118,6 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
     }
   }
   
-
   const handleList = () => {
     if(inputValue.length > 0){
       const item = {
@@ -135,56 +142,73 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
       onBackdropPress={onClose}
       style={{ marginBottom: 0 }}
     >
-      <View style={ styles.container }>
+      { isLoading ? <Loader /> : (
+        <View style={ styles.container }>
+          <View style={ styles.formContainer }>
+            <TextInput style={ styles.title } onChangeText={(text) => setList(prevItems => ({...prevItems, "title": text}))}>{ list.title }</TextInput>
 
-        <View style={ styles.formContainer }>
-          <TextInput style={ styles.title } onChangeText={(text) => setList(prevItems => ({...prevItems, "title": text}))}>{ list.title }</TextInput>
+            <View style={ styles.inputGroup }>
+              <View style={ styles.inputContainer }>
+                <Icon name="shopping-cart" size={32} color="#f8ce24" /> 
 
-          <View style={ styles.inputGroup }>
-            <View style={ styles.inputContainer }>
-              <Icon name="shopping-cart" size={32} color="#f8ce24" /> 
+                <TextInput
+                  style={ styles.input }
+                  placeholder="Adicione o item..."
+                  value={inputValue}
+                  onChangeText={(text) => setInputValue(text)}
+                />
+              </View>
+              
+              <View style={ styles.buttonContainer }>
+                {inputValue.length > 0 ? (
+                  <TouchableOpacity onPress={handleList} style={ styles.button }>
+                    <Text>
+                      {currentUser?.language === "portuguese" && "Adicionar"}
+                      {currentUser?.language === "spanish" && "Agregar"}
+                      {currentUser?.language === "english" && "Add"}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableWithoutFeedback>
+                    <Text style={[styles.button, { backgroundColor: "#DDB308" }]}>
+                      {currentUser?.language === "portuguese" && "Adicionar"}
+                      {currentUser?.language === "spanish" && "Agregar"}
+                      {currentUser?.language === "english" && "Add"}
+                    </Text>
+                  </TouchableWithoutFeedback>
+                )}
+                
 
-              <TextInput
-                style={ styles.input }
-                placeholder="Adicione o item..."
-                value={inputValue}
-                onChangeText={(text) => setInputValue(text)}
+                <TouchableOpacity onPress={() => setInputValue('')} style={ styles.button }>
+                  <Text>
+                    {currentUser?.language === "portuguese" && "Limpar"}
+                    {currentUser?.language === "spanish" && "Borrar"}
+                    {currentUser?.language === "english" && "Clean"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={ styles.table }>
+              <Table
+                list={list}
+                updateQty={updateQty}
+                deleteItem={deleteItem}
+                isEditMode={isEditMode}
               />
             </View>
-            
-            <View style={ styles.buttonContainer }>
-              {inputValue.length > 0 ? (
-                <TouchableOpacity onPress={handleList} style={ styles.button }>
-                  <Text>Adicionar</Text>
-                </TouchableOpacity>
-              ) : (
-                <TouchableWithoutFeedback>
-                  <Text style={[styles.button, { backgroundColor: "#DDB308" }]}>Adicionar</Text>
-                </TouchableWithoutFeedback>
-              )}
-              
 
-              <TouchableOpacity onPress={() => setInputValue('')} style={ styles.button }>
-                <Text>Limpar</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity onPress={ isEditMode ? handleUpdate : handleSubmit } style={ styles.create }>
+              <Text>
+
+                {currentUser?.language === "portuguese" && (isEditMode ? "Salvar" : "Criar Lista" )}
+                {currentUser?.language === "spanish" && (isEditMode ? "Guardar" : "Crear Lista" )}
+                {currentUser?.language === "english" && (isEditMode ? "Save" : "Create List" )}
+              </Text>
+            </TouchableOpacity>
           </View>
-
-          <View style={ styles.table }>
-            <Table
-              list={list}
-              updateQty={updateQty}
-              deleteItem={deleteItem}
-              isEditMode={isEditMode}
-            />
-          </View>
-
-          <TouchableOpacity onPress={ isEditMode ? handleUpdate : handleSubmit } style={ styles.create }>
-            <Text>{ isEditMode ? "Salvar" : "Criar Lista" }</Text>
-          </TouchableOpacity>
         </View>
-
-      </View>
+      )}
     </Modal>
   )
 }

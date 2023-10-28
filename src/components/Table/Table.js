@@ -10,12 +10,15 @@ import {
 
 // Hooks
 import { useState } from 'react';
+import { useSelector } from "react-redux";
 
 // Icons
 import Icon from 'react-native-vector-icons/Foundation';
 
 const Table = ({ list, updateQty, deleteItem, isEditMode }) => {
   const [checkedItems, setCheckedItems] = useState([]);
+
+  const { currentUser } = useSelector((rootReducer) => rootReducer.userReducer);
 
   const checkItem = (itemId) => {
     const isChecked = checkedItems.includes(itemId);
@@ -35,11 +38,19 @@ const Table = ({ list, updateQty, deleteItem, isEditMode }) => {
         <View style={styles.table}>
           <View style={styles.row}>
             <View style={styles.cell}>
-              <Text style={styles.titleCell}>Itens</Text>
+              <Text style={styles.titleCell}>
+                {currentUser?.language === "portuguese" && "Itens"}
+                {currentUser?.language === "spanish" && "Articulos"}
+                {currentUser?.language === "english" && "Items"}
+              </Text>
             </View>
 
             <View style={styles.cell}>
-              <Text style={styles.titleCell}>QTD</Text>
+              <Text style={styles.titleCell}>
+                {currentUser?.language === "portuguese" && "QTD"}
+                {currentUser?.language === "spanish" && "Cantidad"}
+                {currentUser?.language === "english" && "QTY"}
+              </Text>
             </View>
           </View>
 

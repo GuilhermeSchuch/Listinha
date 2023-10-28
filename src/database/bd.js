@@ -32,7 +32,18 @@ export default class DatabaseInit {
 					item_id INTEGER,
 					FOREIGN KEY (list_id) REFERENCES list(id) ON DELETE CASCADE,
 					FOREIGN KEY (item_id) REFERENCES item(id) ON DELETE CASCADE
-				);`
+				);`,
+
+				`CREATE TABLE IF NOT EXISTS user (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					language TEXT
+				);`,
+
+				`INSERT INTO user(id, language)
+					SELECT 0, 'portuguese'
+					WHERE	NOT EXISTS (
+						SELECT id FROM user WHERE id = 0
+					);`
 			];
 
 			db.transaction(
