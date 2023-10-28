@@ -10,6 +10,7 @@ import { setLanguage } from "../../redux/user/actions";
 
 // Hooks
 import { useState, useEffect } from 'react';
+import { useSelector } from "react-redux";
 
 // DB
 import UserService from '../../services/User';
@@ -22,8 +23,9 @@ const Setting = ({ navigation }) => {
 
   // Redux
   const dispatch = useDispatch();
+  const { currentUser } = useSelector((rootReducer) => rootReducer.userReducer);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [userData, setUserData] = useState({
     id: 0,
     language: '',
@@ -45,23 +47,25 @@ const Setting = ({ navigation }) => {
       dispatch(setLanguage({ language: "english" }));
     }
   
-    const updatedUserData = { ...userData, language: updatedLanguage };
+    const updatedUserData = { id: 0, language: updatedLanguage };
+    console.log(updatedUserData);
   
     try {
       await UserService.updateById(updatedUserData);
-      setUserData(updatedUserData);
     } catch (error) {
       console.error("Error updating user language:", error);
     }
   }
 
-  useEffect(() => {
-    setIsLoading(true);
-    UserService.findUser().then((user) => setUserData(user[0]));
-    setIsLoading(false);
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   UserService.findUser().then((user) => setUserData(user[0]));
+  //   setIsLoading(false);
 
-    dispatch(setLanguage({ language: userData.language }));
-  }, []);
+  //   console.log("sim");
+  //   console.log(userData);
+  //   dispatch(setLanguage({ language: userData.language }))
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -69,23 +73,23 @@ const Setting = ({ navigation }) => {
         <>
           <View>
             <Text style={styles.title}>
-              {userData?.language === "portuguese" && "Ajustes"}
-              {userData?.language === "spanish" && "Ajustes"}
-              {userData?.language === "english" && "Settings"}
+              {currentUser?.language === "portuguese" && "Ajustes"}
+              {currentUser?.language === "spanish" && "Ajustes"}
+              {currentUser?.language === "english" && "Settings"}
             </Text>
           </View>
 
           <View>
             <Text>
-              {userData?.language === "portuguese" && "Idioma:"}
-              {userData?.language === "spanish" && "Idioma:"}
-              {userData?.language === "english" && "Language:"}
+              {currentUser?.language === "portuguese" && "Idioma:"}
+              {currentUser?.language === "spanish" && "Idioma:"}
+              {currentUser?.language === "english" && "Language:"}
             </Text>
 
             <SelectDropdown
               data={languages}
               onSelect={(selectedItem, index) => handleUser(selectedItem, index)}
-              defaultButtonText={userData?.language === "portuguese" ? "Selecionar Idioma" : (userData?.language === "spanish" ? "Seleccionar" : "")}
+              defaultButtonText={currentUser?.language === "portuguese" ? "Selecionar Idioma" : (currentUser?.language === "spanish" ? "Seleccionar" : "")}
               buttonStyle={styles.button}
               dropdownStyle={styles.dropdown}
               buttonTextAfterSelection={(selectedItem, index) => {

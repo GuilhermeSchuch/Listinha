@@ -38,7 +38,7 @@ const SideMenu = () => {
             headerTitleStyle: { display: "none" },
             headerStyle: { backgroundColor: "#0283ff" },
             headerTintColor: "#f8ce24",
-            drawerLabel: currentUser?.language === "portuguese" ? "Listas" : (currentUser?.language === "spanish" ? "Lista" : "List"),
+            drawerLabel: currentUser?.language === "portuguese" ? "Listas" : (currentUser?.language === "spanish" ? "Listas" : "List"),
             drawerLabelStyle: { color: "#f8ce24", fontSize: 24 },
             drawerIcon: ({ focused, size }) => (
               <Icon name="clipboard-pencil" size={100} color="#f8ce24" />
@@ -55,7 +55,7 @@ const SideMenu = () => {
             headerTitleStyle: { display: "none" },
             headerStyle: { backgroundColor: "#0283ff" },
             headerTintColor: "#f8ce24",
-            drawerLabel: currentUser?.language === "portuguese" ? "Ajustes" : (currentUser?.language === "spanish" ? "Ajustes" : "List"),
+            drawerLabel: currentUser?.language === "portuguese" ? "Ajustes" : (currentUser?.language === "spanish" ? "Ajustes" : "Settings"),
             drawerLabelStyle: { color: "#f8ce24", fontSize: 24 },
             drawerIcon: ({ focused, size }) => (
               <Icon name="widget" size={100} color="#f8ce24" />
