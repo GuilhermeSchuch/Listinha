@@ -57,7 +57,7 @@ const Table = ({ list, updateQty, deleteItem, isEditMode }) => {
           <ScrollView style={styles.scrollView}>
             {list && list.items.map((item) => (
               <View style={styles.row} key={item.id}>
-                <TouchableOpacity onLongPress={() => deleteItem(item.id, list.id)} onPress={isEditMode ? () => console.log(item.id) : null}>
+                <TouchableOpacity onLongPress={() => deleteItem(item.id, list.id)} onPress={isEditMode ? () => checkItem(item.id) : null}>
                   <View style={styles.cell}>
                     <Text style={[styles.cellText, checkedItems.includes(item.id) ? { color: '#008000', textDecorationLine: "line-through" } : { color: '#000' }]}>{item.name}</Text>
                   </View>
@@ -70,7 +70,7 @@ const Table = ({ list, updateQty, deleteItem, isEditMode }) => {
 
                   <Text style={styles.cellText}>{item.qty}</Text>
 
-                  <TouchableOpacity onPress={() => updateQty(item.id, item.qty - 1)}>
+                  <TouchableOpacity onPress={() => updateQty(item.id, item.qty === 1 ? item.qty : item.qty - 1)}>
                     <Icon name="minus" size={15} color="#f8ce24" style={{ marginLeft: 5, marginTop: 2 }} />
                   </TouchableOpacity>
                 </View>

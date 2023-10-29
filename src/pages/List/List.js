@@ -32,6 +32,9 @@ const List = () => {
     language: '',
   });
 
+  console.log(listData);
+  console.log(list);
+
   const { currentUser } = useSelector((rootReducer) => rootReducer.userReducer);
 
   const toggleModal = () => {
@@ -126,6 +129,7 @@ const List = () => {
           </TouchableOpacity>
         </>
       ) }
+      
 
       <AddList 
         isVisible={isModalVisible}

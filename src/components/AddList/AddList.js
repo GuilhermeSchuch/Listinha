@@ -45,8 +45,9 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   // Convert data from BD to list data
   useEffect(() => {    
     if(isEditMode){
+      console.log(bdList);
       const result = {
-        title: bdList?.length > 0 ? bdList[0]?.list : "oi",
+        title: bdList?.length > 0 ? bdList[0]?.list : (currentUser?.language === "portugese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List")),
         id: bdList[0]?.idList,
         items: bdList?.map(item => ({
           name: item?.item,
