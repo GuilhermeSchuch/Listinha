@@ -12,9 +12,10 @@ export default class DatabaseInit {
     }
     InitDb() {
 			var sql = [
-				// `DROP TABLE IF EXISTS list;`,
 				// `DROP TABLE IF EXISTS list_has_item;`,
+				// `DROP TABLE IF EXISTS list;`,
 				// `DROP TABLE IF EXISTS item;`,
+				// `DROP TABLE IF EXISTS user;`,
 				
 				`CREATE TABLE IF NOT EXISTS list (
 					id INTEGER PRIMARY KEY AUTOINCREMENT,

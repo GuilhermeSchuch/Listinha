@@ -18,8 +18,8 @@ export default class ListaService {
                 for (let i = 0; i < list?.items?.length; i++) {
                   const item = list.items[i];
                   tx.executeSql(
-                    `insert into item (name, qty) values (?, ?)`,
-                    [item.name, item.qty],
+                    `insert into item (id, name, qty) values (?, ?, ?)`,
+                    [item.id, item.name, item.qty],
                     (_, { insertId: itemInsertId }) => {
                       // Insert into list_has_item using the last insert IDs
                       tx.executeSql(

@@ -46,7 +46,7 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   useEffect(() => {    
     if(isEditMode){
       const result = {
-        title: bdList?.length > 0 ? bdList[0]?.list : (currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List")),
+        title: bdList?.length > 0 ? bdList[0]?.list : "oi",
         id: bdList[0]?.idList,
         items: bdList?.map(item => ({
           name: item?.item,
@@ -72,9 +72,9 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   };
 
   const deleteItem = async (itemId, z) => {
-    setIsLoading(true);
-
     try {
+      setIsLoading(true);
+
       if(isEditMode){
         
         setList((prevList) => ({
@@ -94,15 +94,15 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
     } catch (error) {
       console.error("Error adding data:", error);
     }
-    setIsLoading(false);
+
+    setIsLoading(false);    
   };
 
   const handleSubmit = async () => {
     try {
       const insertId = await ListaService.addData(list);
-      // You can now work with the insertId or perform any other actions after the data has been added.
       console.log("Data added with insertId:", insertId);
-      setList({title: 'Lista', items: []});
+      setList({title: (currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List")), items: []});
       
     } catch (error) {
       console.error("Error adding data:", error);
@@ -121,7 +121,7 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   const handleList = () => {
     if(inputValue.length > 0){
       const item = {
-      id: list.items.length,
+      id: list.items.length + 1,
       name: inputValue.trim(),
       qty
     }
@@ -142,8 +142,8 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
       onBackdropPress={onClose}
       style={{ marginBottom: 0 }}
     >
-      { isLoading ? <Loader /> : (
-        <View style={ styles.container }>
+      <View style={ styles.container }>
+        { isLoading ? <Loader /> : (
           <View style={ styles.formContainer }>
             <TextInput style={ styles.title } onChangeText={(text) => setList(prevItems => ({...prevItems, "title": text}))}>{ list.title }</TextInput>
 
@@ -207,8 +207,8 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
-      )}
+        )}
+      </View>
     </Modal>
   )
 }

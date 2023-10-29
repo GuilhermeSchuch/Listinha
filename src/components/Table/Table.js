@@ -57,7 +57,7 @@ const Table = ({ list, updateQty, deleteItem, isEditMode }) => {
           <ScrollView style={styles.scrollView}>
             {list && list.items.map((item) => (
               <View style={styles.row} key={item.id}>
-                <TouchableOpacity onLongPress={() => deleteItem(item.id, list.id)} onPress={isEditMode ? () => checkItem(item.id) : null}>
+                <TouchableOpacity onLongPress={() => deleteItem(item.id, list.id)} onPress={isEditMode ? () => console.log(item.id) : null}>
                   <View style={styles.cell}>
                     <Text style={[styles.cellText, checkedItems.includes(item.id) ? { color: '#008000', textDecorationLine: "line-through" } : { color: '#000' }]}>{item.name}</Text>
                   </View>
