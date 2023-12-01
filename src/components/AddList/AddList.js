@@ -38,18 +38,19 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
 
 
   const [list, setList] = useState({
-    title: currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List"),
+    title: currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List1"),
     items: [],
   });
 
   // Convert data from BD to list data
   useEffect(() => {    
     if(isEditMode){
+      console.log("BDLIST");
       console.log(bdList);
       const result = {
-        title: bdList?.length > 0 ? bdList[0]?.list : (currentUser?.language === "portugese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List")),
+        title: bdList[0]?.list ? bdList[0]?.list : (currentUser?.language === "portugese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List2")),
         id: bdList[0]?.idList,
-        items: bdList?.map(item => ({
+        items: bdList[0]?.item === null ? '' : bdList?.map(item => ({
           name: item?.item,
           qty: item?.qty,
           id: item?.id
@@ -58,7 +59,7 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
       setList(result);
     }
     else{
-      setList({title: (currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List")), items: []});
+      setList({title: (currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List3")), items: []});
     }
   }, [isVisible]);
 
@@ -102,8 +103,10 @@ const AddList = ({ isVisible, isEditMode, onClose, onSubmit, bdList }) => {
   const handleSubmit = async () => {
     try {
       const insertId = await ListaService.addData(list);
+      console.log("list");
+      console.log(list);
       console.log("Data added with insertId:", insertId);
-      setList({title: (currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List")), items: []});
+      setList({title: (currentUser?.language === "portuguese" ? "Lista" : (currentUser?.language === "spanish" ? "Lista" : "List4")), items: []});
       
     } catch (error) {
       console.error("Error adding data:", error);

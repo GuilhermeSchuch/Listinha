@@ -9,7 +9,6 @@ export default class ListaService {
       return new Promise((resolve, reject) =>
         db.transaction(
           tx => {
-            // Insert the list first
             tx.executeSql(
               `insert into list (name) values (?)`,
               [list?.title],
@@ -18,13 +17,13 @@ export default class ListaService {
                 for (let i = 0; i < list?.items?.length; i++) {
                   const item = list.items[i];
                   tx.executeSql(
-                    `insert into item (id, name, qty) values (?, ?, ?)`,
-                    [item.id, item.name, item.qty],
-                    (_, { insertId: itemInsertId }) => {
-                      // Insert into list_has_item using the last insert IDs
+                    `insert into item (name, qty) values (?, ?)`,
+                    [item.name, item.qty],
+                    (_, { insertId: insertItemId }) => {
+
                       tx.executeSql(
                         `insert into list_has_item (list_id, item_id) values (?, ?)`,
-                        [insertId, itemInsertId],
+                        [insertId, insertItemId],
                         (_, { rowsAffected }) => {
                           console.log(`Inserted ${rowsAffected} rows into list_has_item`);
                         },
@@ -169,10 +168,17 @@ export default class ListaService {
           (tx) => {
             tx.executeSql(
               `
-              SELECT l.id AS idList, l.name AS list, i.id, i.name AS item, i.qty FROM list l 
-              JOIN list_has_item lhi ON lhi.list_id = l.id 
-              JOIN item i ON i.id = lhi.item_id WHERE l.id = ?;
+              SELECT l.id AS idList, l.name AS list, i.id, i.name AS item, i.qty 
+              FROM list l 
+              LEFT JOIN list_has_item lhi ON lhi.list_id = l.id 
+              LEFT JOIN item i ON i.id = lhi.item_id 
+              WHERE l.id = ?;
               `,
+              // `
+              // SELECT l.id AS idList, l.name AS list, i.id, i.name AS item, i.qty FROM list l 
+              // JOIN list_has_item lhi ON lhi.list_id = l.id 
+              // JOIN item i ON i.id = lhi.item_id WHERE l.id = ?;
+              // `,
               [id],
               (_, { rows }) => {
                 const results = rows._array;

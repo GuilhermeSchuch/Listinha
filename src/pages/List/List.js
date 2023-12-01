@@ -32,7 +32,9 @@ const List = () => {
     language: '',
   });
 
+  console.log("LISTDATA");
   console.log(listData);
+  console.log("LIST");
   console.log(list);
 
   const { currentUser } = useSelector((rootReducer) => rootReducer.userReducer);
@@ -70,6 +72,8 @@ const List = () => {
 
   const handleFindList = async (id) => {
     try {
+      console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAr")
+      console.log(id);
       setIsLoading(true);
 
       const listId = await ListaService.findById(id).then((list) => setList(list));
